@@ -9,7 +9,7 @@ use(require('chai-subset'));
  * Function that returns a delay of the requested number of milliseconds.
  */
 export const delay = (duration: number = 1) =>
-  new Promise(resolve => setTimeout(resolve, duration));
+  new Promise((resolve) => setTimeout(resolve, duration));
 
 /**
  * Action defines the assertion to run in the test definition
@@ -103,8 +103,9 @@ export async function testMarbles({
   const rpc = new RPC({
     target: { postMessage: (data: any) => messagesSentToRemote.push(JSON.parse(data)) },
     receiver: {
-      readMessages: callback => {
-        sendMessage = event => callback({ data: JSON.stringify(event.data), origin: event.origin });
+      readMessages: (callback) => {
+        sendMessage = (event) =>
+          callback({ data: JSON.stringify(event.data), origin: event.origin });
         return () => (toreDown = true);
       },
     },
@@ -112,7 +113,7 @@ export async function testMarbles({
     serviceId: 'foo',
   });
 
-  rpc.on('recvData', p => messagesReceivedByRPC.push(p));
+  rpc.on('recvData', (p) => messagesReceivedByRPC.push(p));
   rpc.on('isReady', () => (isReady = true));
 
   while (rpcInstance.length < remoteContx.length) {

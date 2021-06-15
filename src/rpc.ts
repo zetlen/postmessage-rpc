@@ -102,7 +102,7 @@ export class RPC extends EventEmitter {
     // Both sides will fire "ready" when they're set up. When either we get
     // a ready or the other side successfully responds that they're ready,
     // resolve the "ready" promise.
-    this.isReady = new Promise<void>(resolve => {
+    this.isReady = new Promise<void>((resolve) => {
       const response = { protocolVersion: options.protocolVersion || '1.0' };
 
       this.expose('ready', () => {
@@ -110,9 +110,7 @@ export class RPC extends EventEmitter {
         return response;
       });
 
-      this.call<void>('ready', response)
-        .then(resolve)
-        .catch(resolve);
+      this.call<void>('ready', response).then(resolve).catch(resolve);
     });
   }
 
@@ -141,9 +139,9 @@ export class RPC extends EventEmitter {
       }
 
       // tslint:disable-next-line
-      new Promise(resolve => resolve(handler(data.params)))
+      new Promise((resolve) => resolve(handler(data.params)))
         .then(
-          result =>
+          (result) =>
             ({
               type: 'reply',
               serviceID: this.options.serviceId,
@@ -163,7 +161,7 @@ export class RPC extends EventEmitter {
                   : { code: 0, message: err.stack || err.message },
             } as IRPCReply<any>),
         )
-        .then(packet => {
+        .then((packet) => {
           this.emit('sendReply', packet);
           this.post(packet);
         });

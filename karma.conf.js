@@ -36,13 +36,12 @@ function addBrowserStackConfig(configObj) {
   configObj.browsers = launchers;
 }
 
-module.exports = config => {
-
+module.exports = (config) => {
   const configObj = {
     /**
      * General base config:
      */
-    basePath: path.join(__dirname, '..'),
+    basePath: __dirname,
 
     files: ['src/*.ts'],
 
@@ -55,25 +54,22 @@ module.exports = config => {
       },
     },
 
-
     plugins: [
       require('karma-typescript'),
       require('karma-mocha'),
       require('karma-mocha-reporter'),
       require('karma-chrome-launcher'),
       require('karma-firefox-launcher'),
-      require('@onslip//karma-safari-launcher')
+      require('@onslip//karma-safari-launcher'),
     ],
     karmaTypescriptConfig: {
       bundlerOptions: {
-        transforms: [
-          require("karma-typescript-es6-transform")()
-        ]
-      }
+        transforms: [require('karma-typescript-es6-transform')()],
+      },
     },
 
     preprocessors: {
-      'src/*.ts': 'karma-typescript'
+      'src/*.ts': 'karma-typescript',
     },
 
     /**
@@ -91,7 +87,6 @@ module.exports = config => {
   };
 
   const isBrowserstack = Boolean(process.env.USE_BROWSER_STACK);
-
 
   if (isBrowserstack) {
     addBrowserStackConfig(configObj);

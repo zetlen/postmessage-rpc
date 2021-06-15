@@ -6,10 +6,10 @@
   "typings": "dist/rpc.d.ts",
   "scripts": {
     "test": "npm-run-all --parallel --silent test:lint test:unit",
-    "test:unit": "karma start test/karma.conf.js --single-run",
-    "test:lint": "tslint -t verbose --project tsconfig.json \"src/**/*.ts\"",
-    "test:watch": "karma start test/karma.conf.js --no-single-run",
-    "fmt": "prettier --write \"src/**/*.{ts,js}\" && npm run -s test:lint -- --fix",
+    "test:unit": "karma start --single-run",
+    "test:lint": "eslint src --ext .js,.ts",
+    "test:watch": "karma start --no-single-run",
+    "fmt": "prettier --ignore-path .eslintignore --write \"**/*.{ts,js}\" && npm run -s test:lint -- --fix",
     "prepare": "tsc"
   },
   "repository": {
@@ -38,6 +38,8 @@
     "chai": "^4.3.4",
     "chai-subset": "^1.6.0",
     "eslint": "^7.28.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-import": "^2.23.4",
     "karma": "^6.3.4",
     "karma-browserstack-launcher": "^1.6.0",
     "karma-chrome-launcher": "^3.1.0",
