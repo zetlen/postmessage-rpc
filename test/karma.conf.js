@@ -1,7 +1,6 @@
 const path = require('path');
 
-module.exports = config => {
-  const isBrowserstack = Boolean(process.env.USE_BROWSER_STACK);
+function addBrowserStackConfig(configObj) {
   const launchers = {
     bsFirefox: {
       base: 'BrowserStack',
@@ -30,19 +29,25 @@ module.exports = config => {
     },
   };
 
-  config.set({
+  configObj.reporters = ['mocha', 'BrowserStack'];
+  configObj.plugins.push(require('karma-browserstack-launcher'));
+  configObj.browserStack = {};
+  configObj.customLaunchers = launchers;
+  configObj.browsers = launchers;
+}
+
+module.exports = config => {
+
+  const configObj = {
     /**
      * General base config:
      */
     basePath: path.join(__dirname, '..'),
-    frameworks: ['mocha'],
-    reporters: isBrowserstack ? ['mocha', 'BrowserStack'] : ['mocha', 'coverage-istanbul'],
-    browserStack: {},
-    coverageIstanbulReporter: {
-      reports: ['text-summary', 'html'],
-      // fixWebpackSourcePaths: true,
-      dir: path.join(__dirname, '../coverage'),
-    },
+
+    files: ['src/*.ts'],
+
+    frameworks: ['mocha', 'karma-typescript'],
+    reporters: ['mocha', 'karma-typescript'],
 
     client: {
       mocha: {
@@ -50,30 +55,31 @@ module.exports = config => {
       },
     },
 
-    customLaunchers: launchers,
 
     plugins: [
+      require('karma-typescript'),
       require('karma-mocha'),
       require('karma-mocha-reporter'),
       require('karma-chrome-launcher'),
-      require('karma-browserstack-launcher'),
-      require('karma-webpack'),
-      require('karma-coverage-istanbul-reporter'),
+      require('karma-firefox-launcher'),
+      require('@onslip//karma-safari-launcher')
     ],
+    karmaTypescriptConfig: {
+      bundlerOptions: {
+        transforms: [
+          require("karma-typescript-es6-transform")()
+        ]
+      }
+    },
 
-    /**
-     * Webpack and bundling config:
-     */
-    webpack: require('./webpack.config'),
-    webpackServer: { noInfo: true },
-    webpackMiddleware: { stats: 'errors-only' },
-    files: ['test/karma.shim.js'],
-    preprocessors: { 'test/karma.shim.js': ['webpack'] },
+    preprocessors: {
+      'src/*.ts': 'karma-typescript'
+    },
 
     /**
      * Karma run config:
      */
-    browsers: isBrowserstack ? Object.keys(launchers) : ['ChromeHeadless'],
+    browsers: ['ChromeHeadless'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -82,5 +88,14 @@ module.exports = config => {
     mochaReporter: {
       showDiff: true,
     },
-  });
+  };
+
+  const isBrowserstack = Boolean(process.env.USE_BROWSER_STACK);
+
+
+  if (isBrowserstack) {
+    addBrowserStackConfig(configObj);
+  }
+
+  config.set(configObj);
 };
